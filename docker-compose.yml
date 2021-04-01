@@ -1,0 +1,28 @@
+# WARNING: this file is not suitable for production, please use with caution
+version: '3'
+
+volumes:
+  eddo_db_vol:
+
+services:
+  web:
+    image: eddo_service_api
+    build: .
+    command: uwsgi --http 0.0.0.0:5000 --module eddo_service_api.wsgi:app
+    env_file:
+      - ./.flaskenv
+    volumes:
+      - ./eddo_service_api:/code/eddo_service_api
+    ports:
+      - "5001:5000"
+  postgres:
+      image: postgres:12
+      volumes:
+        - eddo_db_vol:/var/lib/postgresql/data
+      environment:
+        - POSTGRES_HOST=localhost
+        - POSTGRES_PASSWORD=admin123
+        - POSTGRES_DB=eddo_qazna_db
+      ports:
+        - "5432:5432"
+      restart: always
