@@ -2,7 +2,8 @@ import dateutil
 from eddo_service_api.auth.resources import (
     UserResource,
     RoleResource,
-    TaskResource)
+    TaskResource,
+    PositionResource)
 import pytz
 from flask import request, jsonify, Blueprint, current_app as app
 from flask_restful import Api
@@ -47,6 +48,7 @@ auth = Api(blueprint)
 auth.add_resource(UserResource, "/users", endpoint="user_by_id")
 auth.add_resource(RoleResource, "/roles", endpoint="role_by_id")
 auth.add_resource(TaskResource, "/tasks", endpoint="task_by_id")
+auth.add_resource(PositionResource, "/posit", endpoint="position_by_id")
 
 
 @blueprint.route("/sms", methods=["POST"])
@@ -94,11 +96,11 @@ def login():
     if not request.is_json:
         return jsonify(NOT_JSON), 400
 
-    username = request.json.get("bin", None)
+    username = request.json.get("iin", None)
     password = request.json.get("password", None)
     if not username or not password:
         return jsonify(REQUIRED_MOBILE_AND_PASSWORD), 400
-    user = TblUsers.query.filter_by(bin=username).first()
+    user = TblUsers.query.filter_by(iin=username).first()
     if user is None or not pwd_context.verify(password, user.password):
         return jsonify(LOGIN_FAILED), 400
     access_token = create_access_token(identity=user.id)
@@ -117,14 +119,11 @@ def register():
 
     full_name = request.json.get("full_name", None)
     mobile = request.json.get("mobile", None)
-    bin = request.json.get("bin", None)
+    iin = request.json.get("iin", None)
     username = request.json.get("username", None)
     email = request.json.get("email", None)
     password = request.json.get("password", None)
-    active = request.json.get("active", None)
-    role_id = request.json.get("role_id")
     is_resident = request.json.get("is_resident")
-    status = request.json.get("status")
 
     # org_id = request.json.get("org_id", None)
 
@@ -140,11 +139,8 @@ def register():
         username=username,
         email=email,
         mobile=mobile,
-        bin=bin,
-        active=active,
-        role_id=role_id,
+        iin=iin,
         is_resident=is_resident,
-        status=status
     )
 
     obj_user.password = password
