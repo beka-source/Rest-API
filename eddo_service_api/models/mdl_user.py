@@ -66,6 +66,7 @@ class TblTasks(db.Model):
     task_text = db.Column(db.String(255), nullable=True)
     create_time = db.Column(db.DateTime(timezone=True), default=time_now)
     update_time = db.Column(db.DateTime(timezone=True), default=time_now, onupdate=time_now)
+    deadline = db.Column(db.Date, index=True)
     positions = db.relationship('TblPosition', backref='tbl_tasks', uselist=True)
 
     # from_user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('tbl_auth_service_users.id'))

@@ -50,4 +50,4 @@ class PositioinSchema(ma.SQLAlchemyAutoSchema):
 #         model = TblTasks
 #         sqla_session = db.session
 #         load_instance = True
-
+#

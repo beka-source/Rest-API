@@ -3,6 +3,8 @@ from eddo_service_api.auth.resources import (
     UserResource,
     RoleResource,
     TaskResource,
+    ChangeTXResource,
+    ChangeSTResource,
     PositionResource)
 import pytz
 from flask import request, jsonify, Blueprint, current_app as app
@@ -48,6 +50,8 @@ auth = Api(blueprint)
 auth.add_resource(UserResource, "/users", endpoint="user_by_id")
 auth.add_resource(RoleResource, "/roles", endpoint="role_by_id")
 auth.add_resource(TaskResource, "/tasks", endpoint="task_by_id")
+auth.add_resource(ChangeSTResource, "/status", endpoint="status_by_id")
+auth.add_resource(ChangeTXResource, "/text", endpoint="text_by_id")
 auth.add_resource(PositionResource, "/posit", endpoint="position_by_id")
 
 

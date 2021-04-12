@@ -99,46 +99,68 @@ class RoleResource(Resource):
 
         return {"msg": "Role deleted"}
 
+# class TaskResource(Resource):
+#     @jwt_required
+#     def put(self):
+#         user_id =  get_jwt_identity()
+#         schema = PositioinSchema(partial=True)
+#         position = TblPosition.query.get(request.args.get('task_id',None))
+#         user = TblUsers.query.get_or_404(user_id)
+#         for i in position.role_id:
+#             if i
+#         role = schema.load(request.json, instance=role)
+#         db.session.commit()
+
 
 class TaskResource(Resource):
-    # @jwt_required
+    @jwt_required
     # @roles_required('admin')
     def get(self):
-        task_id = request.args.get('task_id')
+        query = TblPosition.query
+        resul = []
+        # user_id = '21af59a0-5159-4b84-80e7-fb5ceb0cea6b'
+        user_id = get_jwt_identity()
+        user = TblUsers.query.get_or_404(user_id)
+        tasks = TblTasks.query
+        for i in tasks:
+            query_ = query.filter(TblPosition.task_id == i.id)
+            if query_.count() != 0:
+                print(query)
+                users = []
+                for j in query_:
+                    users.append({
+                        'user_id': str(j.user_id),
+                        'username': j.user.username,
+                        'full_name': j.user.full_name,
+                        'role_id': str(j.role_id),
+                        'role_title': j.role_title.title,
+                    })
+                resul.append({'task_id': str(i.id), 'task_status': i.task_status, 'task_text': i.task_text, 'create_time': str(i.create_time), 'update_time': str(i.update_time), 'deadline': str(i.deadline), 'users': users})
+        print(resul)
 
-        if task_id:
-            schema = TaskSchema()
-            task = TblTasks.query.get_or_404(task_id)
-            task_json = schema.dump(task)
+        return {'result': resul}
 
-            return task_json
+        # return paginate(query, schema)
 
-        schema = TaskSchema(many=True)
-        query = TblTasks.query
-
-        return paginate(query, schema)
-
-    # @jwt_required
-    # @roles_required('admin')
-    # @app.route('/todo/api/v1.0/tasks', methods=['POST'])
-    # def create_task():
-    #     if not request.json or not 'title' in request.json:
-    #         abort(400)
-    #     task = {
-    #         'id': tasks[-1]['id'] + 1,
-    #         'title': request.json['title'],
-    #         'description': request.json.get('description', ""),
-    #         'done': False
-    #     }
-    #     tasks.append(task)
-    #     return jsonify({'task': task}), 201
     def post(self):
         schema = TaskSchema()
-        task = schema.load(request.json)
+        query_all = dict(request.json)
+        a = query_all.pop('users')
+
+        task = schema.load(query_all)
         db.session.add(task)
         db.session.commit()
+        task = schema.dump(task)
 
-        return {"msg": "Task created", "Task": schema.dump(task)}, 201
+        task_id = task['id']
+        for i in a:
+            i['task_id'] = task_id
+        ty = PositioinSchema()
+        for i in a:
+            db.session.add(ty.load(i))
+            db.session.commit()
+        task['users'] = a
+        return {"msg": "Task created", "Task": task}, 201
 
     # @jwt_required
     # @roles_required('admin')
@@ -160,8 +182,40 @@ class TaskResource(Resource):
         return {"msg": "Task deleted"}
 
 
-class PositionResource(Resource):
+class ChangeTXResource(Resource):
+    @jwt_required
+    def put(self):
+        user_id = get_jwt_identity()
+        schema = TaskSchema(partial=True)
+        id = request.json.get('task_id')
+        task_text = request.json.get('task_text')
 
+        task = TblTasks.query.get_or_404(id)
+        task.task_text = task_text
+        db.session.add(task)
+        db.session.commit()
+
+        return {"msg": "Text updated", "Text": schema.dump(task)}
+
+
+class ChangeSTResource(Resource):
+    @jwt_required
+    def put(self):
+        user_id = get_jwt_identity()
+        schema = TaskSchema(partial=True)
+        id = request.json.get('task_id')
+        task_status = request.json.get('task_status')
+
+        task = TblTasks.query.get_or_404(id)
+        task.task_status = task_status
+        db.session.add(task)
+        db.session.commit()
+
+        return {"msg": "Status updated", "Status": schema.dump(task)}
+
+
+class PositionResource(Resource):
+    @jwt_required
     def get(self):
         query = TblPosition.query
         resul = []
