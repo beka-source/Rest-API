@@ -1,10 +1,11 @@
-from eddo_service_api.auth.resources.user import UserResource, RoleResource, TaskResource, PositionResource, ChangeSTResource, ChangeTXResource
+from eddo_service_api.auth.resources.user import UserResource, RoleResource, TaskResource, TaskUserRoleResource, ChangeSTResource, ChangeTXResource, CommentResource
 
 __all__ = [
     'UserResource',
     'RoleResource',
     'TaskResource',
-    'PositionResource',
+    'TaskUserRoleResource',
     'ChangeSTResource',
-    'ChangeTXResource'
+    'ChangeTXResource',
+    'CommentResource'
 ]

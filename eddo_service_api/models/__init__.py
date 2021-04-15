@@ -1,6 +1,6 @@
 from eddo_service_api.models.mdl_vacancy import TblVacancy
 from eddo_service_api.models.mdl_test import Child, Parent
-from eddo_service_api.models.mdl_user import TblUsers, TblRole, TblTasks, TblPosition
+from eddo_service_api.models.mdl_user import TblUsers, TblRole, TblTasks, TaskUserRole, TblComment
 
 
 __all__ = [
@@ -10,6 +10,7 @@ __all__ = [
     'TblUsers',
     'TblRole',
     'TblTasks',
-    'TblPosition'
+    'TaskUserRole',
+    'TblComment'
 ]
 

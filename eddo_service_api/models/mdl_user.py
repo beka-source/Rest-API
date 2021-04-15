@@ -62,7 +62,7 @@ class TblTasks(db.Model):
     __tablename__ = 'tbl_tasks'
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, unique=True, default=uuid.uuid4)
-    task_status = db.Column(db.String, nullable=True)
+    task_status = db.Column(db.String, nullable=False, default='New')
     task_text = db.Column(db.String(255), nullable=True)
     create_time = db.Column(db.DateTime(timezone=True), default=time_now)
     update_time = db.Column(db.DateTime(timezone=True), default=time_now, onupdate=time_now)
@@ -76,14 +76,37 @@ class TblTasks(db.Model):
     # user2 = db.relationship("TblUsers", foreign_keys=[to_user_id, ])
 
 
-class TblPosition(db.Model):
- 
-    __tablename__ = 'tbl_position'
+class TaskUserRole(db.Model):
+    tablename = 'tbl_task_user_role'
 
     task_id = db.Column(UUID(as_uuid=True), db.ForeignKey('tbl_tasks.id'), primary_key=True)
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('tbl_auth_service_users.id'), primary_key=True)
     role_id = db.Column(UUID(as_uuid=True), db.ForeignKey('tbl_role.id'), primary_key=True)
-    task = db.relationship('TblTasks', backref='tbl_position', uselist=False)
+    task = db.relationship('TblTasks', backref=backref("tbl_position", cascade="all, delete-orphan"))
     user = db.relationship('TblUsers', backref='tbl_position', uselist=False)
     role_title = db.relationship('TblRole', backref='tbl_position', uselist=False)
 
+
+class TblComment(db.Model):
+
+    tablename = 'tbl_comment'
+
+    comment_id = db.Column(UUID(as_uuid=True), primary_key=True, unique=True, default=uuid.uuid4())
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('tbl_auth_service_users.id'))
+    task_id = db.Column(UUID(as_uuid=True), db.ForeignKey('tbl_tasks.id'))
+    comment = db.Column(db.String(255), nullable=False)
+    reply_to = db.Column(UUID(as_uuid=True), nullable=True)
+    create_time = db.Column(db.DateTime(timezone=True), default=time_now)
+    update_time = db.Column(db.DateTime(timezone=True), default=time_now, onupdate=time_now)
+
+
+class TblRek(db.Model):
+
+    __tablename__ = 'tbl_rek'
+
+    rek_id = db.column(UUID(as_uuid=True), primary_key=True, unique=True, default=uuid.uuid4())
+    module_id = db.column(UUID(as_uuid=True), primary_key=True, unique=True, default=uuid.uuid4())
+    title = db.Column(db.String(100), unique=False)
+    category = db.Column(db.String(150), unique=False)
+    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey('tbl_auth_service_users.id'))
+    task_id = db.Column(UUID(as_uuid=True), db.ForeignKey('tbl_tasks.id'))

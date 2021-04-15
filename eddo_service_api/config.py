@@ -3,6 +3,7 @@
 Use env var to override
 """
 import os
+from datetime import timedelta
 
 
 ENV = os.getenv("FLASK_ENV")
@@ -14,6 +15,9 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 JWT_BLACKLIST_ENABLED = True
 JWT_BLACKLIST_TOKEN_CHECKS = ["access", "refresh"]
+
+ACCESS_EXPIRES = timedelta(minutes=1000)
+JWT_ACCESS_TOKEN_EXPIRES = ACCESS_EXPIRES
 
 CELERY = {
     "broker_url": os.getenv("CELERY_BROKER_URL"),

@@ -3,6 +3,7 @@ from eddo_service_api.auth.resources import (
     UserResource,
     RoleResource,
     TaskResource,
+    CommentResource,
     ChangeTXResource,
     ChangeSTResource,
     PositionResource)
@@ -53,6 +54,7 @@ auth.add_resource(TaskResource, "/tasks", endpoint="task_by_id")
 auth.add_resource(ChangeSTResource, "/status", endpoint="status_by_id")
 auth.add_resource(ChangeTXResource, "/text", endpoint="text_by_id")
 auth.add_resource(PositionResource, "/posit", endpoint="position_by_id")
+auth.add_resource(CommentResource, "/comment", endpoint="comment_by_id")
 
 
 @blueprint.route("/sms", methods=["POST"])
